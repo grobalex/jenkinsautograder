@@ -6,10 +6,13 @@
 3. A Jenkins instance with a working webhook to the Git Organization (com or enterprise) and a setup GitHub Organization Jenkins pipeline
 
 ## Note:
-
 ###### Jenkins 
 Ensure that when using Jenkins matrix authentication, you disable public access. 
 
 ## Summary
-A Jenkinsfile that that uses
-An Autograder build on Jenkins to work with Github Classroom 
+Jenkins is a task automation software commonly used by software developers to run continoues integration and deployment on their code. As such, it lends itself perfectly to execute autograding tasks on student repos without the students having access to the solutions. 
+
+###### Currently Supported Autograding
+1. Style Grading 
+2. Console Tests
+3. Unit Test
