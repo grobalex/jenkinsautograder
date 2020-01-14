@@ -58,7 +58,7 @@ pipeline {
 │   ├── problem1_out.txt
 │   ├── problem{x}_out.txt
 │   ├── problem2_in.txt
-│   └── problem2_in.txt
+│   └── problem2_out.txt
 ├── problem1.py
 ├── problem2.py
 └── README.md
