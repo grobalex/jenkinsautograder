@@ -26,7 +26,8 @@ Jenkins is a task automation software commonly used by software developers to ru
 ## Jenkinsfile
 Two Jekinsfiles are needed. A dummy one for the solutions repo and the one for the base-repo. Without adding a Jenkinsfile to the solutions repo, jenkins will not be able to discover the repo and will not copy over the files to the server, making them inaccessible for the automated grading. 
 
-**In the solution-repo** create a Jenkinsfile with the follow contents:
+*In the base-repo* copy and paste the Jenkinsfile from this repo
+*In the solution-repo* create a Jenkinsfile with the follow contents:
  
 ```java
 pipeline {
@@ -40,8 +41,6 @@ pipeline {
     }
 }
 ```
-
-**In the base-repo** copy and paste the Jenkinsfile from this repo
 
 ###### Assumptions 
 
