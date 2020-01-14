@@ -30,7 +30,6 @@ Two Jekinsfiles are needed. A dummy one for the solutions repo and the one for t
  
 `pipeline {
     agent any
-
     stages {
         stage('Nothing') {
             steps {
