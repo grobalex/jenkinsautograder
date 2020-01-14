@@ -42,6 +42,6 @@ pipeline {
 }
 ```
 
-**Envirnoment Variables that need to be set
+**Envirnoment Variables that need to be set**
 
 **Line 54** --> Fill in your Git Organization 
