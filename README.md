@@ -28,7 +28,8 @@ Two Jekinsfiles are needed. A dummy one for the solutions repo and the one for t
 
 **In the Base-repo** create a Jenkinsfile with the follow contents:
  
-```pipeline {
+```java
+ pipeline {
     agent any
     stages {
         stage('Nothing') {
@@ -37,7 +38,8 @@ Two Jekinsfiles are needed. A dummy one for the solutions repo and the one for t
             }
         }
     }
-}```
+}
+```
 
 ###### Assumptions 
 
