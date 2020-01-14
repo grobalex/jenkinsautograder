@@ -22,3 +22,26 @@ Jenkins is a task automation software commonly used by software developers to ru
   * `python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt && diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt`
 * Unit Test
   * `python3 ${h_file}.py`
+
+## Jenkinsfile
+Two Jekinsfiles are needed. A dummy one for the solutions repo and the one for the base-repo. Without adding a Jenkinsfile to the solutions repo, jenkins will not be able to discover the repo and will not copy over the files to the server, making them inaccessible for the automated grading. 
+
+**In the Base-repo** create a Jenkinsfile with the follow contents:
+ 
+`pipeline {
+    agent any
+
+    stages {
+        stage('Nothing') {
+            steps {
+                echo 'Nothing to do, need a dummy jenkinsfile so Jenkins can find the repo :)'
+            }
+        }
+    }
+}`
+
+###### Assumptions 
+
+###### Envirnoment Variables that need to be set
+
+1: Line 
