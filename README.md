@@ -16,9 +16,9 @@ Jenkins is a task automation software commonly used by software developers to ru
 1. **Python** *but can be easily adapted with language specific unix commands*
 
 ###### Currently Supported Autograding
-1. Style Grading
-`python3 -m pycodestyle --first ${file}.py`
-2. Console Tests
-`python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt && diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt`
-3. Unit Test
-`python3 ${h_file}.py`
+* Style Grading
+  * `python3 -m pycodestyle --first ${file}.py`
+* Console Tests
+  * `python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt && diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt`
+* Unit Test
+  * `python3 ${h_file}.py`
