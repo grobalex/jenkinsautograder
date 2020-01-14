@@ -44,4 +44,23 @@ pipeline {
 
 **Envirnoment Variables that need to be set**
 
-**Line 54** --> Fill in your Git Organization 
+**Line 54** --> Fill in your Git Organization
+
+## Solutions Repo Structure 
+
+```bash
+├── hidden
+│   ├── problem1_hidden.py
+│   └── problem2_hidden.py
+├── console
+│   ├── problem1_in.txt
+│   ├── problem{x}_in.txt
+│   ├── problem1_out.txt
+│   ├── problem{x}_out.txt
+│   ├── problem2_in.txt
+│   └── problem2_in.txt
+├── problem1.py
+├── problem2.py
+└── README.md
+```
+
