@@ -43,4 +43,4 @@ Two Jekinsfiles are needed. A dummy one for the solutions repo and the one for t
 
 ###### Envirnoment Variables that need to be set
 
-1: Line 
+**Line 54** --> Fill in your Git Organization 
