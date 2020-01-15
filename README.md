@@ -50,17 +50,17 @@ pipeline {
 
 ```bash
 ├── hidden
-│   ├── problem1_hidden.py
-│   └── problem2_hidden.py
+│   ├── assignment1_hidden.py
+│   └── assignment2_hidden.py
 ├── console
-│   ├── problem_in1.txt
-│   ├── problem_in{x}.txt
-│   ├── problem_out1.txt
-│   ├── problem_out{x}.txt
-│   ├── problem_in2.txt
-│   └── problem_out2.txt
-├── problem1.py
-├── problem2.py
+│   ├── assignment1_in1.txt
+│   ├── assignment1_in{x}.txt
+│   ├── assignment1_out1.txt
+│   ├── assignment1_out{x}.txt
+│   ├── assignment2_in2.txt
+│   └── assignment2_out2.txt
+├── assignment1.py
+├── assignment2.py
 └── README.md
 ```
 
