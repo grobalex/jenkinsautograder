@@ -53,12 +53,12 @@ pipeline {
 │   ├── problem1_hidden.py
 │   └── problem2_hidden.py
 ├── console
-│   ├── problem1_in.txt
-│   ├── problem{x}_in.txt
-│   ├── problem1_out.txt
-│   ├── problem{x}_out.txt
-│   ├── problem2_in.txt
-│   └── problem2_out.txt
+│   ├── problem_in1.txt
+│   ├── problem_in{x}.txt
+│   ├── problem_out1.txt
+│   ├── problem_out{x}.txt
+│   ├── problem_in2.txt
+│   └── problem_out2.txt
 ├── problem1.py
 ├── problem2.py
 └── README.md
