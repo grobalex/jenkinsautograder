@@ -99,7 +99,7 @@ pipeline {
                       dir("console") {
                        sh(script: 'ls *${file}_in* > filecount', returnStatus: true)
                        console_file_count = readFile( "filecount" ).split( "\\r?\\n" )
-                         if (console_file_count.size() > 1) {
+                         if (console_file_count.size() != 0) {
                           for(int i = 1;i<= console_file_count.size();i++) {
                             sh 'echo "-----------------" >> ${WORKSPACE}/grading_output.txt'
                             sh "echo Console test ${file} ${i}: >> ${WORKSPACE}/grading_output.txt"
@@ -112,17 +112,17 @@ pipeline {
                           }
                       }
                       }
+                  }
                   sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
-                  sh "echo Running Unit Tests ${file}: >> ${WORKSPACE}/grading_output.txt"
+                  sh "echo Running Unit Tests: >> ${WORKSPACE}/grading_output.txt"
                   sh "echo *Note if empty: no unit tests exist* >> ${WORKSPACE}/grading_output.txt"
                   sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                   dir("hidden") {
+                   dir("") {
                      catchError {
                      sh "cp -R ${WORKSPACE}/*.py hidden"
-                     sh "python3 ${file}_tests.py 2>> ${WORKSPACE}/grading_output.txt"
+                     sh "python3 grading_tests.py >> ${WORKSPACE}/grading_output.txt"
                       }
                     }
-                  } //  end loop
                 sh "echo END >> ${WORKSPACE}/grading_output.txt"
                 push_to_git()
                 }
