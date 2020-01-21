@@ -73,7 +73,9 @@ void run_console_tests(String file = "") {
       sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
       sh 'echo "Running input/output tests ..." >> ${WORKSPACE}/grading_output.txt'
       sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-      sh(script: 'ls *${file}_in* > filecount', returnStatus: true)
+      sh 'echo HERE'
+      sh "echo ${file}"
+      sh(script: "ls *${file}_in* > filecount", returnStatus: true)
       console_file_count = readFile( "filecount" ).split( "\\r?\\n" )
         for(int i = 1;i<= console_file_count.size();i++) {
           sh 'echo "-----------------" >> ${WORKSPACE}/grading_output.txt'
@@ -83,6 +85,7 @@ void run_console_tests(String file = "") {
             sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt", returnStatus: false)
             sh(script: "diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
           }
+        //sh "rm filecount"
         sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
       }
     }
@@ -124,11 +127,9 @@ pipeline {
               script {
               grading_output()
                 assignment_files = get_files("${WORKSPACE}")
-                assignment_files.each { file ->
-                  run_style_checker(file)
-                }
                 run_unit_tests()
                 assignment_files.each { file ->
+                  run_style_checker(file)
                   run_console_tests(file)
                 }
                 sh "echo END >> ${WORKSPACE}/grading_output.txt"
