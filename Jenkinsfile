@@ -99,7 +99,7 @@ pipeline {
                       dir("console") {
                        sh(script: 'ls *${file}_in* > filecount', returnStatus: true)
                        console_file_count = readFile( "filecount" ).split( "\\r?\\n" )
-                         if (console_file_count.size() != 0) {
+                         if (console_file_count.size() > 1) {
                           for(int i = 1;i<= console_file_count.size();i++) {
                             sh 'echo "-----------------" >> ${WORKSPACE}/grading_output.txt'
                             sh "echo Console test ${file} ${i}: >> ${WORKSPACE}/grading_output.txt"
@@ -120,7 +120,7 @@ pipeline {
                    dir("") {
                      catchError {
                      sh "cp -R ${WORKSPACE}/*.py hidden"
-                     sh "python3 grading_tests.py >> ${WORKSPACE}/grading_output.txt"
+                     sh "python3 grading_tests.py 2>> ${WORKSPACE}/grading_output.txt"
                       }
                     }
                 sh "echo END >> ${WORKSPACE}/grading_output.txt"
