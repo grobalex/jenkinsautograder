@@ -117,7 +117,7 @@ pipeline {
                   sh "echo Running Unit Tests: >> ${WORKSPACE}/grading_output.txt"
                   sh "echo *Note if empty: no unit tests exist* >> ${WORKSPACE}/grading_output.txt"
                   sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                   dir("") {
+                   dir("hidden") {
                      catchError {
                      sh "cp -R ${WORKSPACE}/*.py hidden"
                      sh "python3 grading_tests.py 2>> ${WORKSPACE}/grading_output.txt"
