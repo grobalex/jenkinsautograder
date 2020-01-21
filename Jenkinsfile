@@ -61,7 +61,7 @@ pipeline {
               sh 'mkdir -p hidden'
               sh 'mkdir -p console'
               try {
-                sh "cp -R ${env.workspace_pwd}/${solutions_repo}/hidden ."
+                sh "cp -R ${env.workspace_pwd}/${solutions_repo}/hidden/ ."
               } catch (Exception e) {
                   sh 'echo no hidden dir'
               }
@@ -70,12 +70,14 @@ pipeline {
               } catch (Exception e) {
                   sh 'echo no console dir'
               }
+
              }
            }
         } 
       stage('Get Submitted Files ') {
         steps {
               script {
+              grading_output()
                 assignment_files = get_files("${WORKSPACE}")
                 hidden_files = get_files("hidden")
                 assignment_files.each { file ->
@@ -95,26 +97,31 @@ pipeline {
                       sh "echo *Note if empty: no console tests exist* >> ${WORKSPACE}/grading_output.txt"
                       sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
                       dir("console") {
-                       sh(script: 'ls *${file}_in* > filecount', returnStatus: true) 
+                       sh(script: 'ls *${file}_in* > filecount', returnStatus: true)
                        console_file_count = readFile( "filecount" ).split( "\\r?\\n" )
-                        for(int i = 1;i<= console_file_count.size();i++) {
-                          sh 'echo "-----------------" >> ${WORKSPACE}/grading_output.txt'
-                          sh "echo Console test ${file} ${i}: >> ${WORKSPACE}/grading_output.txt"
-                          sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                          catchError {
-                          sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt", returnStatus: false)
-                          sh(script: "diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
+                         if (console_file_count.size() > 1) {
+                          for(int i = 1;i<= console_file_count.size();i++) {
+                            sh 'echo "-----------------" >> ${WORKSPACE}/grading_output.txt'
+                            sh "echo Console test ${file} ${i}: >> ${WORKSPACE}/grading_output.txt"
+                            sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+                            catchError {
+                            sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt", returnStatus: false)
+                            sh(script: "diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
+                            }
+                            sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
                           }
-                          sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                        }
+                      }
                       }
                   sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
                   sh "echo Running Unit Tests ${file}: >> ${WORKSPACE}/grading_output.txt"
                   sh "echo *Note if empty: no unit tests exist* >> ${WORKSPACE}/grading_output.txt"
                   sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
                    dir("hidden") {
-                     sh "python3 ${file}_tests.py >> ${WORKSPACE}/grading_output.txt"
-                   }
+                     catchError {
+                     sh "cp -R ${WORKSPACE}/*.py hidden"
+                     sh "python3 ${file}_tests.py 2>> ${WORKSPACE}/grading_output.txt"
+                      }
+                    }
                   } //  end loop
                 sh "echo END >> ${WORKSPACE}/grading_output.txt"
                 push_to_git()
