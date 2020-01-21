@@ -4,25 +4,20 @@
 
 def get_files(String directory = "") {
   dir(directory) {
-  try {
+    try {
       sh "find ./*.py -exec  basename {} .py \\; > listFiles"
       return readFile( "listFiles" ).split( "\\r?\\n" )
-  } catch (Exception e) {
+    } catch (Exception e) {
       return []
+    }
   }
-}
 }
 
-def get_all_files(String directory = "") {
-  dir(directory) {
-  try {
-      sh "ls > listFiles"
-      return readFile( "listFiles" ).split( "\\r?\\n" )
-  } catch (Exception e) {
-      return []
+ def isDirEmpty() {
+    def myDirectory = sh(script: "ls", returnStdout: true).trim()
+    println(myDirectory)
+    return null == myDirectory || "".equals(myDirectory)
   }
-}
-}
 
 void grading_output() {
   sh "touch ${WORKSPACE}/grading_output.txt"
@@ -42,6 +37,56 @@ void push_to_git() {
         sh 'git commit -m "[JAG] Run at ${BUILD_TIMESTAMP}"'
         sh 'git push -f https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${org}/${student_repo_name}.git HEAD:autograder'
     }
+}
+
+void run_style_checker(String file = "") {
+  dir("") {
+    sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+    sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
+    sh "echo Running style checker on: ${file} >> ${WORKSPACE}/grading_output.txt"
+    sh "echo *Note if empty: no style errors found* >> ${WORKSPACE}/grading_output.txt"
+    sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+    catchError {
+      sh "python3 -m pycodestyle --first ${file}.py >> ${WORKSPACE}/grading_output.txt"
+    }
+    sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+  }
+}
+
+void run_unit_tests() {
+  dir("hidden") {
+    if(!isDirEmpty()) {
+      sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
+      sh "echo Running function tests... >> ${WORKSPACE}/grading_output.txt"
+      sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+      catchError {
+        sh "cp -R ${WORKSPACE}/*.py ."
+        sh "python3 grading_tests.py 2>> ${WORKSPACE}/grading_output.txt"
+      }
+    }
+  }
+}
+
+void run_console_tests(String file = "") {
+  dir("console") {
+    if (!isDirEmpty()) {
+      sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
+      sh 'echo "Running input/output tests ..." >> ${WORKSPACE}/grading_output.txt'
+      sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+      sh(script: 'ls *${file}_in* > filecount', returnStatus: true)
+      console_file_count = readFile( "filecount" ).split( "\\r?\\n" )
+        for(int i = 1;i<= console_file_count.size();i++) {
+          sh 'echo "-----------------" >> ${WORKSPACE}/grading_output.txt'
+          sh "echo Test ${i} for ${file}: >> ${WORKSPACE}/grading_output.txt"
+          sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+          catchError {
+            sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt", returnStatus: false)
+            sh(script: "diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
+          }
+        sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
+      }
+    }
+  }
 }
 
 pipeline {
@@ -79,50 +124,13 @@ pipeline {
               script {
               grading_output()
                 assignment_files = get_files("${WORKSPACE}")
-                hidden_files = get_files("hidden")
                 assignment_files.each { file ->
-                      dir("") {
-                        sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                        sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
-                        sh "echo Running style checker on: ${file} >> ${WORKSPACE}/grading_output.txt"
-                        sh "echo *Note if empty: no style errors found* >> ${WORKSPACE}/grading_output.txt"
-                        sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                        catchError {
-                          sh "python3 -m pycodestyle --first ${file}.py >> ${WORKSPACE}/grading_output.txt"
-                        }
-                        sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                      }
-                      sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
-                      sh 'echo Running Console Tests: >> ${WORKSPACE}/grading_output.txt'
-                      sh "echo *Note if empty: no console tests exist* >> ${WORKSPACE}/grading_output.txt"
-                      sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                      dir("console") {
-                       sh(script: 'ls *${file}_in* > filecount', returnStatus: true)
-                       console_file_count = readFile( "filecount" ).split( "\\r?\\n" )
-                         if (console_file_count.size() > 1) {
-                          for(int i = 1;i<= console_file_count.size();i++) {
-                            sh 'echo "-----------------" >> ${WORKSPACE}/grading_output.txt'
-                            sh "echo Console test ${file} ${i}: >> ${WORKSPACE}/grading_output.txt"
-                            sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                            catchError {
-                            sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt", returnStatus: false)
-                            sh(script: "diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
-                            }
-                            sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                          }
-                      }
-                      }
-                  }
-                  sh 'echo "-------------------------------------" >> ${WORKSPACE}/grading_output.txt'
-                  sh "echo Running Unit Tests: >> ${WORKSPACE}/grading_output.txt"
-                  sh "echo *Note if empty: no unit tests exist* >> ${WORKSPACE}/grading_output.txt"
-                  sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
-                   dir("hidden") {
-                     catchError {
-                     sh "cp -R ${WORKSPACE}/*.py hidden"
-                     sh "python3 grading_tests.py 2>> ${WORKSPACE}/grading_output.txt"
-                      }
-                    }
+                  run_style_checker(file)
+                }
+                run_unit_tests()
+                assignment_files.each { file ->
+                  run_console_tests(file)
+                }
                 sh "echo END >> ${WORKSPACE}/grading_output.txt"
                 push_to_git()
                 }
