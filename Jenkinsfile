@@ -83,7 +83,7 @@ void run_console_tests(String file = "") {
           sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
           catchError {
             sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt", returnStatus: false)
-            sh(script: "diff -bwi out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
+            sh(script: "diff -bwis out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
           }
         //sh "rm filecount"
         sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
@@ -97,15 +97,17 @@ pipeline {
   environment {
     def student_repo_name = "${env.GIT_URL.replaceFirst(/^.*\/([^\/]+?).git$/, '$1')}"
     def assignment = student_repo_name.split("-").first()
-    def solutions_repo = sh(script: "grep -A1 '${org}/${assignment}.*solution/master' ${env.workspace_pwd}/workspaces.txt", returnStdout: true).split("\n").last()
     def student_repo = "${env.WORKSPACE}"
     def org = "khoury-sp20-cs5001-align"
   }
 
  stages {
      stage('Create necassary files') {
-            steps {
-              script {
+           steps {
+             script {
+               String[] assign_list = student_repo_name.split("-")
+               def solutions_repo = sh(script: "grep -A1 '${org}/${assignment}.*${assign_list[1]}.*solution/master' ${env.workspace_pwd}/workspaces.txt", returnStdout: true).split("\n").last()
+   
               sh 'mkdir -p hidden'
               sh 'mkdir -p console'
               try {
