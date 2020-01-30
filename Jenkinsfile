@@ -107,7 +107,10 @@ pipeline {
              script {
                String[] assign_list = student_repo_name.split("-")
                def solutions_repo = sh(script: "grep -A1 '${org}/${assignment}.*${assign_list[1]}.*solution/master' ${env.workspace_pwd}/workspaces.txt", returnStdout: true).split("\n").last()
-   
+              
+              sh 'rm -rf hidden'
+              sh 'rm -rf console'  
+               
               sh 'mkdir -p hidden'
               sh 'mkdir -p console'
               try {
