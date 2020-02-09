@@ -5,7 +5,7 @@
 def get_files(String directory = "") {
   dir(directory) {
     try {
-      sh "find ./*.py -exec  basename {} .py \\; > listFiles"
+      sh "find ./*.py ! -name '*_tests*.py' -exec  basename {} .py \\; > listFiles"
       return readFile( "listFiles" ).split( "\\r?\\n" )
     } catch (Exception e) {
       return []
