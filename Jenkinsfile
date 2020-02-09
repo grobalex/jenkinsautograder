@@ -82,8 +82,8 @@ void run_console_tests(String file = "") {
           sh "echo Test ${i} for ${file}: >> ${WORKSPACE}/grading_output.txt"
           sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
           catchError {
-            sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt > out.txt", returnStatus: false)
-            sh(script: "diff -bwis out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
+            sh(script: "python3 ${WORKSPACE}/${file}.py < ${file}_in${i}.txt &> out.txt", returnStatus: false)
+            sh(script: "diff -Zs out.txt ${file}_out${i}.txt >> ${WORKSPACE}/grading_output.txt", returnStatus: false)
           }
         //sh "rm filecount"
         sh 'echo " " >> ${WORKSPACE}/grading_output.txt'
