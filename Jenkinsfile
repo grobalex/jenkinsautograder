@@ -35,7 +35,7 @@ void push_to_git() {
         }  
         sh "git add grading_output.txt"
         sh 'git commit -m "[JAG] Run at ${BUILD_TIMESTAMP}"'
-        sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${org}/${student_repo_name}.git HEAD:autograder'
+        sh 'git push -f https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${org}/${student_repo_name}.git HEAD:autograder'
     }
 }
 
